@@ -1,0 +1,94 @@
+<!-- <app-navbarinto></app-navbarinto> -->
+
+<div class="row without-borders d-none d-lg-flex d-md-flex">
+
+    <div class="col-lg-2 col-md-3 col-sm-12 text-center without-borders" style="background:#96bc96;">
+        <app-submenu [page]="'shipments'"></app-submenu>
+    </div>
+
+    <div class="col-lg-10 col-md-9 col-sm-12">
+        <div class="container bg-white p-5">
+            <h3>Envíos</h3>
+            <div class="">
+                <div class="row justify-content-center">
+                    <div class="col-lg-6 col-md-6 col-sm-12 text-center">
+
+                        <div style="width:100%;height:40vh;">
+                            <app-map [latitud]="latitud" [longitud]="longitud" [listMessengers]="listMessengers" #map></app-map>
+                        </div>
+
+                        <div *ngIf="step===1" class="alert alert-dark mt-2 mb-2" role="alert">
+
+                            <div *ngIf="accion==='proccess'" class="alert alert-secondary mt-3 mb-2" role="alert">
+                                <h5 class="text-secondary">Enviando...</h5>
+                            </div>
+
+                            <div *ngIf="accion==='ok'" class="alert alert-success mt-3 mb-2" role="alert">
+                                <h5 class="text-success">Asignado correctamente.</h5>
+                            </div>
+
+                            <div *ngIf="accion==='fail'" class="alert alert-danger mt-3 mb-2" role="alert">
+                                <h5 class="text-danger">Error al asignar mensajero.</h5>
+                            </div>
+
+                            <h5 class="text-dark">Documento a enviar {{ document }}</h5>
+                            <select class="form-control shadow mt-3" [(ngModel)]="messenger">
+                                <option value="seleccionar">Seleccionar mensajero</option>
+                                <option *ngFor="let m of listMessengers" value={{m.identification}}>{{ m.identification }}</option>
+                            </select>
+                            <button [disabled]="messenger==='seleccionar'" class="btn btn-secondary mt-2" (click)="sendToMessenger()"><i class="fa-sharp fa-solid fa-paper-plane"></i> Enviar</button>
+                        </div>
+
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 text-center">
+
+                        <div class="pt-5" *ngIf="loading">
+                            <h3>Cargando</h3>
+                            <div class="spinner-border pt-2" style="width: 3rem; height: 3rem;" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                        </div>
+
+                        <div *ngIf="!loading" class="bg-light p-3 border shadow table-responsive">
+                            <table class="table table-hover responsive" id="listShipments" style="width:100%">
+                                <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Documento</th>
+                                        <th>Estado</th>
+                                        <th>Accion</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let shipment of listShipments" class="text-start">
+                                        <td><i class="fa-solid fa-location-dot mr-2 text-black"></i></td>
+                                        <td>{{shipment.identification}}</td>
+                                        <td *ngIf="shipment.status === 'start'">Iniciado</td>
+                                        <td *ngIf="shipment.status === 'process'">En proceso</td>
+                                        <td *ngIf="shipment.status === 'done'">Terminado</td>
+                                        <td *ngIf="shipment.status === 'cancel'">Cancelado</td>
+                                        <td>
+                                            <button class="btn btn-info mr-1" [disabled]="!shipment.latitudInput && !shipment.longitudInput" (click)="selectShipments(shipment.latitudInput, shipment.longitudInput);map.selectedShipment();"><i class="fa-solid fa-location-dot"></i></button>
+                                            <button class="btn btn-secondary mr-1" (click)="assignMessenger(shipment.id, shipment.identification);"><i class="fa-solid fa-hand-pointer"></i></button>
+                                            <button class="btn btn-danger" (click)="delete(shipment.id)"><i class="fa-solid fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="d-flex justify-content-center align-items-center text-center d-sm-block d-lg-none d-md-none" style="height:100vh;">
+    <div>
+        <img class="mb-3" src="../../../assets/img/devices.svg" width="80%" alt="">
+        <h2 class="mb-3">Utilice una tableta o una pc para visualizar contenido.</h2>
+        <a routerLink="/" class="btn btn-success shadow">Pagina principal</a>
+    </div>
+</div>
